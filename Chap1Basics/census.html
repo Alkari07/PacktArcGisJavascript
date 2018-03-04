@@ -52,11 +52,64 @@
             'dojo/domReady!'
         ], function(Map, ArcGISDynamicMapServiceLayer, IdentifyParameters, IdentifyTask,
             InfoTemplate, arrayUtils){
+                var censusUrl = "http://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/";
                 var map = new Map("map", {
                     basemap: "national-geographic",
                     center: [-95, 45],
                     zoom:3
                 });
+
+                var layer = new ArcGISDynamicMapServiceLayer(censusUrl);
+                var iTask=new IdentifyTask(censusUrl);
+                map.addLayer(layer);
+
+                function onIdentifyComplete(results) {
+                    //takes in a list of results and return the feature parameter of each result
+                    return arrayUtils.map(results, function(result) {
+                        //include information on how to display each feature
+                        var feature = result.feature;
+                        var title = result.layerName;
+                        var content;
+                        //info template specifies which feature data to format and display
+                        //the star means "everything"
+                        //you  could specify fieldname by fieldname
+                        switch(title) {
+                            case "Census Block Points": 
+                                content = "Population: ${POP2000}<br/>" + 
+                                "Households: ${HOUSEHOLDS}<br/>Housing Units: ${HSE_UNITS}";
+                                break;
+                            default:
+                                content = "${*}";
+                        }
+                        feature.infoTemplate = new InfoTemplate(title, content);
+                        return feature;
+                    });
+                }
+                function onMapLoad() {
+                    //add click listener
+                    map.on('click', function(event) {
+                        var params = new IdentifyParameters();
+                        params.geometry = event.mapPoint;
+                        params.layerOption = IdentifyParameters.LAYER_OPTION_ALL;
+                        params.mapExtent = map.extent;
+                        params.returnGeometry = true;
+                        params.width = map.width;
+                        params.height = map.height;
+                        params.spatialReference= map.spatialReference;
+                        params.tolerance = 3;
+                        //execute and get deferred promise object
+                        var defResults = iTask.execute(params).addCallback(onIdentifyComplete);
+                        map.infoWindow.setFeatures([defResults]);
+                        map.infoWindow.show(event.mapPoint);
+                    });
+                }
+                
+                if(map.loaded) {
+                    onMapLoad();
+                } else {
+                    map.on("load", onMapLoad);
+                }
+                
         });
     </script>
 </body>
