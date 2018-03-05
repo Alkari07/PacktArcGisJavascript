@@ -1,0 +1,119 @@
+Map constructor
+    var map = new Map("divId", {
+        basemap: "name of basemap",
+        center: [lon, lat],
+        zoom: Integer zoomLevel
+        autoresize: boolean should the map resize to fit all available div space as browser size changes
+                    other options: street, satellite, hybrid, topo, gray, oceans, osm
+        extent: set coordinates of where the edges of the map should be 
+        scale: how many IRL inches one inch on map represents (500 -> one inch on screen is 500 IRL inches)
+        LOD: level of detail
+
+    });
+
+Map properties
+    loaded: Boolean indicating if the map is done loading
+    layerIds: list of references to the layers added to it
+    spatialReference
+
+Map Methods
+    add, move, and retrieve layers
+    setZoom
+    setScale
+    setLevel
+    setExtent
+    centerAndZoom: centers and zooms on a bounding box
+    centerAt(): center at a point
+
+Map Events
+    loaded 
+    click
+    extent-changes
+    layer-add
+    layers-add-result: multiple layers are added
+    mouse-over
+    update-start: fires before layers are loaded, either by adding new layers or moving the map to download more data
+    update-end
+
+- Layer data is provided through a map service
+- ArcGISDynamicMapServiceLayer is the default type of map published through ArcGIS ArcGIS Server
+    - This type of layer dynamically resizes with zoom, which can be expensive for things like imagery
+    require(['esri/map', 'esri/layers/ArcGISDynamicMapServiceLayer'],
+    function(Map, ArcGISDynamicMapServiceLayer) {
+        var map = new Map('mapDiv', {...});
+        var layer = new ArcGISDynamicMapServiceLayer ("URL");
+        map.addLayer(layer);
+    });
+
+- ArcGISTiledMapServiceLayer tiles a map service.  Content is already drawn into images at scales defined when the map service
+    is published.  They are stored for quick retrieval
+    - however, to reflect changes (like some feature changing) the tiles must be rebuilt
+    - also restrict zoom to certain discreet levels
+
+GraphicsLayers: custom vector graphics aded to a map.  The map object always has a GraphicsLayer accessible via
+    map.graphics property
+
+FeatureLayers: specialized layers built on a GraphicsLayer
+    custom graphics plus feature data
+    FeatureLayers have three primary modes for selection
+        MODE_ONDEMAND: only features that fit within the map extent or query are loaded
+        MODE_SELECTION: only features that are selected by interacting with the map are downloaded
+        MODE_SNAPSHOT: all features are initially downloaded into memory.  popular for small data sets
+        MODE_AUTO: automatically pick between ondemand and snapshot
+    
+Other layer types
+    KMLLayer: usually associated with google Earth, published in Keyhole markup language
+    CSVLayer: comma delimited file with a lat and lon coordinate
+    WMSLayer and WMTSLayer: OGC compliant WMS  in xml
+        -requesting directly from a WMS requires a proxy since you first have to GetCapabilities
+        - if you already know the resourceInfo, you don't need a  proxy
+    StreamLayer: a layer displaying live streaming data from an ArcGIS GeoEvent processor
+
+Basic Geometry Objects
+    point
+    Polyline
+    polygon
+        getCentroid(): returns point roughly in the middle of the polygon
+        contains(): takes a point and returns a boolean if the point is within the polygon
+    extent (was this replaced by envelope?): rectangular polygon described by x min/max, y min/max
+    multipoint
+
+Geometry spatialReference
+    contains either a well known idea WKID or Well known text WKT
+
+Symbols and renderers: tell arc how to render graphics data
+    SimpleLineSymbol: how line and polygon graphics are added to the map (color, width, and style)
+    SimpleMarkerSymbol: point and multipoinnt graphics
+    SimpleFillSymbols: how the inside of a polygon is shown
+
+Points and Polylgons can be displayed using esri/symbols/PictureFillSymbol
+
+Renderers assign a common graphics style to all graphics inside a layer, as opposed to having to assign everything
+    one at a time
+    SimpleRenderer: assigns one symbol to all graphics
+    require(['esri/map', 'esri/renderers/SimpleRenderer', 'esri/symbols/SimpleLineSymbol',
+    'esri/Color', 'dojo/domReady'], function(Map, SimpleRenderer, LineSymbol, Color) {
+        var map = new Map('map', {basemap: "OSM"});
+        var symbol = new LineSymbol().setColor(new Color('#55aadd"));
+        var renderer = new SimpleRenderer(symbol);
+
+        map.graphics.setRenderer(renderer);
+    });
+
+    UniqueValueRenderer: displays different symbols for graphics based on one of their attributes
+    ClassBreakRenderer: displays different graphics depending on where they fit on a range of values, like 
+        population Density
+    
+InfoTemplates allow you to enter data from attributes using the ${name} notation
+    //a popup graphic containing name/value pairs for all attributes
+    graphic.infoTemplate = new InfoTemplate("Attributes", "${*}");
+    //you can add html into the templates to create customized stuff inside
+    graphic.infoTemplate = new InfoTemplate ("Marine Habitat(${name})", "<table><tbody>...);
+
+Toolbars
+    Navigation toolbar handles map navigation.  Gives user controls for zooming, panning, etc
+    Draw toolbar allows users to draw shapes on the map.  event handlers can be attached for drawing Events
+    Edit toolbar allows you to change map graphics' size, shape, and orientation
+
+
+
