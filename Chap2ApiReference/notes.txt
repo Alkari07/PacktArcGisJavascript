@@ -115,5 +115,61 @@ Toolbars
     Draw toolbar allows users to draw shapes on the map.  event handlers can be attached for drawing Events
     Edit toolbar allows you to change map graphics' size, shape, and orientation
 
+Tasks
+    Tasks are resource intensive processing best left to the Server
+    Task made up of three parts: constructor, parameters, results
+    GeometryService tasks:
+        AreasAndLengths: find areas and perimters of Polylgons
+        AutoComplete: Helps create polygons adjacent to other polygons by filling gaps
+        buffer: Creates a poly whose edges are as et distance from a source Geometry
+        convexHull: creates the smallest poly shape necessary to contain all input Geometry
+        cut: splits a polyline or polygon along a second polyline
+        difference: takes a list of geometries and a second polygon and returns the first list
+            of geometry with the second poly cut out
+        distance: distance between two geometries
+        generalize:  draws a similar looking shape with much fewer Points
+        Intersect:Give a list of geometries and another geometry, returns the geometries defined by where 
+            the first list intersected with the second
+        Label Points: find a point within a polygon that would be the best position for a Label
+        Lengths: for lines and polylines, finds the planar distance from beginning to end
+        Offset:: given a geometry anda distance, will create a geometry the defined distance to the right
+            or left
+        Project: Based on a geometry and a new spatial refernce, returns geometry in the new SR;
+        Relation: Based on two sets of geometries and a specified relationship (ie, "in common"), returns
+            a list of geometries that meet the relationship
+        Reshape: given a line or polygon and a secondary line, it changes the shape of the first based 
+            on the second, adding to the original or tossing some of it away;
+        Simplify: given a complicated polygon where the edges crosses itself, returns a simpler poly
+            where the crossed parts are undone
+        TrimExtend: given a list of polylines, and a polyline to trim or extend to, it cuts lines in the list
+            where they cross over the second, and extends polylines that don't reach the second
+        Union: given a list of polygons, creates a unified geometry where all polygons are dissolved along
+            edges that overlap, creating one solid
+    QueryTask
+        Execute: executes the query task for the query task parameters and returns features
+        executeForcount: returns the number of results only
+        executeForExtent: based on the parameters, returns the geographic extent which contains all search
+            results
+        executeForIds: with parameters pased, returns a list of objectIds only (ignores 1000 record limit)
+    IdentifyTask
+        A shortcut way to retrieve data from a map service for a popup
+        Unlike QueryTask, the identify task can search all layers on a map service at the specified point
+        You pass it "Identifyparameters"
+    FindTask: Finds all features on a map service that contain the keyword specified
+    Geocoding: provides an approximate location for an addressed based on street addressing data
+    Locator: provides geocoding and reverse services
+    Routing: provides effective routes.  Requires server extensions
+
+    Dijits: UI manipulation using dojo
+        Measurement: measures distances, areas, and perimiters of locations on the map
+        Print: dropdown controller that lets the user select from a predefined list of print options
+        Bookmarks: save custom areas on the map
+        basemaps: changing basaemaps
+        Popup and InfoWindow: small window to view data about features on the map
+        Editing: allow for editing of features on the map  
+            AttributeInspector
+            TemplatePicker: provides a selector to select what feature types and subtypes to editing
+            
+
 
 
