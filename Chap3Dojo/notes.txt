@@ -1,0 +1,75 @@
+Three main parts of Dojo: dojo, dijit, and dojox
+    dojo: base functionality of modules, manipulation of widgits x-browser encapsulation
+    dijit: provides visual elements that integrate with dojo package.  Provide a consistent x-browser UI
+        also contains tools necessary to create custom widgits
+    dojox: provides extensions to dojo.  experimental or niche functionality.  Most useful part is mobile extensions
+
+To wire in your own javascript packages as modules, you need to register them with dojo config
+    ex dojo config:
+    <script>
+        dojoConfig = {
+            async: true,
+            isDebug: true,
+            packages: [
+                {
+                    name: "myPackage",
+                    location: location.pathname.replae(/\/[^/]+$/, '') + "myPackage"
+                }
+            ]
+        }
+    </script>
+    THEN YOU
+    require(["myPackage/myModule"], function(myModule) {...})
+
+    require plays a module once and its done.  But if you define it as a class, you can reuse
+
+    The declare keyword declares a defined module as a class and allows it to inherit from other classes in an OO way
+    // this class extends Button
+        ex:
+        define(['dojo/_base/declare', 'dojit/form/Button"] function(declare, Button) {
+            return declare(Button, {
+                class properties object
+                });
+        })
+
+You can also provide one base class and any number of mixins, which don't extend constructor functionality but do provide
+    additional attributes and methods
+    return declare ([_WidgetBase, _OnDigitClickMixin, ...], {...});;
+
+The object properties are the actual class itself and should include a constructor
+    declare("myApp/Fibonacci", null, {
+        list: [],
+        //static properties are out here
+        constructor: function() {
+            //instance class properties in here
+            this.myInstanceProperty ='foo'
+            ...
+        },
+        showNumber: function() {alert (this.myNumber)}
+    })
+
+Evented modules
+    When you module (class) is declared with Evented as its parent class, it gains the emit() method to 
+        broadcast events
+        emit(stringName, {customEventObject})
+    
+_WidgetBase module 
+    provides the base class necessary to create a dijit module
+    Introduces a lifecycle for the widget, like constructor, mix ins, build rendering, etc.
+    - postCreate, startup, destroy, etc
+
+Common mixins  
+    _TemplatedMixin: lets module replace its existing HTML content iwth either a string template or
+        HTML from some other source
+        - Allows you to impliment reusable html templates with attribute binding
+    _OnDigitClickMixin: allows elements within your template to be "clicked" (includes touch)
+    _FocusMixin: provides focus and blur events for template
+
+BorderContainer creates a layout that subdivides the space into a 5 piece grid
+    -center
+    -top (fills whole horizontal space unless right or left is sidebar)
+    -bottom (fills whole horizontal space unless right or left is sidebar)
+    -right
+    - left
+    - the design parameter allows you to switch to left/right sidebar options
+    
