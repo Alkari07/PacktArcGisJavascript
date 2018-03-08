@@ -1,0 +1,37 @@
+- typically, GIS servers are exposed over port 6080 (usually configured for port 80 or https 443)
+    -typical breakdown
+    http://<GIS Server name>:6080/<site name, usually arcgis>/rest/services
+
+- Mandatory REST service endpoints for Map services
+    - Legend
+    - Export Map (download an image in a BBox)
+    - identify (all layers at a geometry)
+    - find
+
+- Feature services are similar to map services but provide more functionality:
+    - editing of content
+    - display feature symbology without a legend service
+    - symbology can be edited clientside by renderer
+    - can support versioned data (audit tables / undo)
+    - offline editing and sync
+    - 
+- field names (name) cannot have  spaces or some characters
+    - the alias is the display name string
+
+- domain defines what values are valid for a field
+    - range is a valid numerical range (ex: 1-5)
+    - code is a list of valid entries and the code 
+
+- You can specify an "out" spatial reference to have arc Server do the geospatial conversion calculation
+
+- polygons are a list of points where the last point is the same as the first
+
+- Simple symbols: esri provides a series of simple symbols that can be defined by short json:
+    - Simple line
+    - simple marker (point)
+    - simple fill (polygon)
+    - picture marker
+    - picture fill (polygon w/ picture)
+    - text symbol (labels)
+- You won't usually see symbol json passed between server and client, but all symbol constructors in the API
+    accept json objects
