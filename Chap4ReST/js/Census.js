@@ -15,10 +15,13 @@ define([
     'dojo/text!http://localhost:8080/js/templates/StateCensus.html',
     'dojo/text!http://localhost:8080/js/templates/CountyCensus.html',
     'dojo/text!http://localhost:8080/js/templates/BlockGroupCensus.html',
-    'dojo/text!http://localhost:8080/js/templates/BlockCensus.html',],
+    'dojo/text!http://localhost:8080/js/templates/BlockCensus.html',
+    'esri/symbols/SimpleMarkerSymbol',
+    'esri/symbols/SimpleFillSymbol'],
     function (declare, _WidgetBase, _TemplatedMixin, _OnDijitClickMixin, censusTemplate, domStyle,
         dom, IdentifyTask, dojoOn, lang, IdentifyParameters,
-        arrayUtils, InfoTemplate, StateTemplate, CountyTemplate, BlockGroupTemplate, BlockTemplate) {
+        arrayUtils, InfoTemplate, StateTemplate, CountyTemplate, BlockGroupTemplate, BlockTemplate,
+        MarkerSymbol, FillSymbol) {
         return declare ([_WidgetBase, _TemplatedMixin, _OnDijitClickMixin], {
             templateString: censusTemplate,
             baseClass: 'y2k-census',
@@ -46,6 +49,26 @@ define([
                 } else {
                     this.map.on('load', lang.hitch(this, this._onMapLoad));
                 }
+            },
+            _onMapLoad: function() {
+                //chage the infoWindow symbol
+                this.map.infoWindow.markerSymbol = new MarkerSymbol({
+                    style: 'esriSMSDiamond',
+                    color: [255, 200,30],
+                    size: 12,
+                    outline: {
+                        width: 1,
+                        color: [111, 98, 34]
+                    }
+                });
+                this.map.infoWindow.fillSymbol = new fillSymbol({
+                    style: 'esriSFSSolid',
+                    color: [255, 250, 169, 128],
+                    outline: {
+                        width: 2,
+                        color: [111, 98, 34]
+                    }
+                });
             },
             _onMapClick: function(event) {
                 var params = new IdentifyParameters();
