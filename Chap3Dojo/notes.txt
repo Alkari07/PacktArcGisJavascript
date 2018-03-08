@@ -73,3 +73,5 @@ BorderContainer creates a layout that subdivides the space into a 5 piece grid
     - left
     - the design parameter allows you to switch to left/right sidebar options
     
+Dojo/text lets a module download any sort of text file as a string (including html)
+    - This allows you to load in html templates as a string and insert them programatically
