@@ -11,3 +11,14 @@ html, body {
 *, *:before, *:after {
     box-sizing: inherit;
 }
+
+.LocateButton {
+    position: absolute;
+    left: 29px;
+    top: 120px;
+    z-index: 500;
+}
+
+.saveButton {
+    margin: 0 0 0 48px;
+}
