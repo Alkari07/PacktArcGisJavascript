@@ -16,11 +16,13 @@ require([
     'dojo/dom-construct',
     'esri/dijit/AttributeInspector',
     'dijit/form/Button',
+    'esri/symbols/SimpleMarkerSymbol',
+    'esri/Color',
     'dojo/domReady!'
 ], function(
     parser, Map, Graphic, Extent, Editor, TemplatePicker, Query, BorderContainer, ContentPane,
     FeatureLayer, ArcGISDynamicMapServiceLayer, MarkerSymbol, config, LocateButton,
-    domConstruct, AttributeInspector, Button
+    domConstruct, AttributeInspector, Button, SimpleMarkerSymbol, Color
 ) {
     var maxExtent = new Extent({
         'xmin' : -13519092.335425414,
@@ -99,9 +101,10 @@ require([
     function showInspector(evt) {
         var selectQuery = new Query();
         var point = evt.mapPoint;
-        var mapScale = mapgetScale();
+        var mapScale = map.getScale();
 
         selectQuery.geometry = evt.mapPoint;
+        selectQuery.distance=50000;
 
         incidentLayer.selectFeatures(selectQuery, FeatureLayer.SELECTION_NEW, function (features) {
             if (!features.length) {
@@ -113,7 +116,7 @@ require([
 
             map.infoWindow.setTitle(updateFeature.getLayer().name);
             map.infoWindow.show(evt.screenPoint, map.getInfoWindowAnchor(evt.screenPoint));
-        
+            
         });
     }
 
@@ -134,6 +137,32 @@ require([
             console.log("selected: ", selected);
         });
     }
+
+    map.on('click', function(evt) {
+        // if a feature template has been selected.
+        if (selected) {
+            var currentDate = new Date();
+            var incidentAttributes = {
+                req_type: selected.template.name,
+                req_date: (currentDate.getMonth() + 1) + "/" + 
+                    currentDate.getDate() + "/" + currentDate.getFullYear(),
+                req_time: currentDate.toLocaleTimeString,
+                address: "",
+                district: "",
+                status: 1
+            };
+            // var incidentGraphic = new Graphic(evt.mapPoint, new SimpleMarkerSymbol().setStyle(
+            //     SimpleMarkerSymbol.STYLE_SQUARE).setColor(
+            //     new Color([255,0,0,0.5])), incidentAttributes);
+            var incidentGraphic = new Graphic(evt.mapPoint, selected.symbol, incidentAttributes);
+            incidentLayer.applyEdits([incidentGraphic],null,null).then(function() {
+            showInspector(evt);  
+            });
+        } else {
+            showInspector(evt);
+        }
+    });
+
     function startEditing() {
         //add locate button
         var locator = new LocateButton({map: map}, "locatebutton");
@@ -141,27 +170,7 @@ require([
         generateTemplatePicker(incidentLayer);
         generateAttributeInspector(incidentLayer);
         //add map click event to create th new editable feature
-        map.on('click', function(evt) {
-            // if a feature template has been selected.
-            if (selected) {
-                var currentDate = new Date();
-                var incidentAttributes = {
-                    req_type: selected.template.name,
-                    req_date: (currentDate.getMonth() + 1) + "/" + 
-                        currentDate.getDate() + "/" + currentDate.getFullYear(),
-                    req_time: currentDate.toLocaleTimeString,
-                    address: "",
-                    district: "",
-                    status: 1
-                };
-                var incidentGraphic = new Graphic(evt.mapPoint, selected.symbol, incidentAttributes);
-                incidentLayer.applyEdits([incidentGraphic,null,null]).then(function() {
-                showInspector(evt);  
-            });
-            } else {
-                showInspector(evt);
-            }
-        });
+        
 
         incidentLayer.setSelectionSymbol(
             new MarkerSymbol({color: [255,0,0]})
