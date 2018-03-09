@@ -1,0 +1,29 @@
+- Feature Templates: give the user preconfigured features to add to the map, making it easier to edit service data
+    - allows you to predefine the fields of the feature, or even set default values
+
+- Feature service modes
+    - Snapshot: download all the data to the client map all at once
+    - On demand: downloads features within the map extent
+    - Selection: only get data for features that have been selected or queries specifically
+
+- edit tool bar 'esri/toolbars/edit'
+    - allows user to change the shape, orienteation, scale, and position of graphics on a map
+
+- The attribute inspector is for when you don't want to mess with the geometry or location of things, just change the attribute data   
+    - Automatically detects all editable fields and populates a web form to manipulate them
+    - contains a layer info object which includes:
+        - featureLayer: the feature layer being edited
+        - userId: the ArcGIS server user id for authentication
+        - shoobjectid: whether or not you want to show the object id when the feature is selected
+        - among other things about the fields
+
+- The template picker allows user to select from a list of predefined feature templates to add stuff to the map
+    - you can define your own templates here to let the user have a custom 'all in one' feature Selection
+
+- Attachment editor allows you to add attachments to feature edits/creation
+
+- Editor dijit provides an all-in-one tool for feature creation/update/delete
+
+- snapping manager: allows the editing off featuers based on the vertex edges of some other feature polygon / line
+
+-Idneity manager handles logins and security for clientside comms with ArcGIS server / online
