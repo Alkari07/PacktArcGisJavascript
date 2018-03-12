@@ -1,0 +1,12 @@
+- charting functionality is contained in 'dojox/charting'
+    - there are both 2d and 3d charting options
+    - action package includes custom chart events to make them interactive
+
+- to load other js packages (such as more advanced charting), you need to import it as a package in the dojo config
+    - then, you can load it up using AWD the same as anything else
+    ex:
+    require(['jquery'], function($) {
+        //assigns the jquery package (imported through dojo.config) to the $ variable, so it can be used the same as we're used to 
+        //in typical jquery uses
+        
+    })
